@@ -16,6 +16,35 @@ import gamingHero from "@/assets/gaming-hero.jpg";
 import { useScrollDirection } from "@/hooks/useScrollDirection";
 import { mockReviews, USE_MOCK_DATA } from "@/data/mockReviews";
 
+// Función para convertir saltos de línea: \n simple = <br/>, \n\n = doble <br/> con espacio
+const formatTextWithLineBreaks = (text: string) => {
+  if (!text) return null;
+  
+  // Primero dividimos por \n pero necesitamos detectar \n\n
+  const parts: JSX.Element[] = [];
+  const lines = text.split('\n');
+  
+  lines.forEach((line, index) => {
+    // Añadimos el contenido de la línea
+    parts.push(<span key={`line-${index}`}>{line}</span>);
+    
+    // Si no es la última línea, añadimos el salto
+    if (index < lines.length - 1) {
+      // Chequeamos si la línea siguiente está vacía (lo que indica \n\n)
+      if (lines[index + 1] === '' && index + 1 < lines.length) {
+        // Salto doble: añadimos <br/> con margen
+        parts.push(<br key={`br1-${index}`} />);
+        parts.push(<br key={`br2-${index}`} />);
+      } else if (line !== '') {
+        // Salto simple: solo <br/>
+        parts.push(<br key={`br-${index}`} />);
+      }
+    }
+  });
+  
+  return parts;
+};
+
 const ReviewDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -531,8 +560,8 @@ const ReviewDetail = () => {
                   <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
                     {/* Texto inicial sin spoilers */}
                     {initialText && (
-                      <div className="text-sm sm:text-base md:text-base text-muted-foreground whitespace-pre-line mb-4 sm:mb-6 leading-relaxed">
-                        {initialText}
+                      <div className="text-sm sm:text-base md:text-base text-muted-foreground mb-4 sm:mb-6 leading-relaxed">
+                        {formatTextWithLineBreaks(initialText)}
                       </div>
                     )}
                     
@@ -559,8 +588,8 @@ const ReviewDetail = () => {
                         </div>
                         
                         <CollapsibleContent className="space-y-4">
-                          <div className="text-sm sm:text-base md:text-base text-muted-foreground whitespace-pre-line leading-relaxed">
-                            {spoilerText}
+                          <div className="text-sm sm:text-base md:text-base text-muted-foreground leading-relaxed">
+                            {formatTextWithLineBreaks(spoilerText)}
                           </div>
                           
                           {/* Aviso persistente de spoilers cuando está abierto */}
@@ -587,8 +616,8 @@ const ReviewDetail = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
-                  <div className="text-sm sm:text-base md:text-base text-muted-foreground whitespace-pre-line leading-relaxed">
-                    {section.content}
+                  <div className="text-sm sm:text-base md:text-base text-muted-foreground leading-relaxed">
+                    {formatTextWithLineBreaks(section.content)}
                   </div>
                 </CardContent>
               </Card>

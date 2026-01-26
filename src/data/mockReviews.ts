@@ -2,6 +2,7 @@
 // Importar los archivos JSON de las reseñas
 import tlou2Data from '../../reviews/the-last-of-us-2.json';
 import clairObscurData from '../../reviews/clair-obscur-expedition-33.json';
+import xcom2Data from '../../reviews/xcom2.json';
 
 export const mockReviews = [
   {
@@ -50,7 +51,31 @@ export const mockReviews = [
     dislikes_count: 0,
     views_count: 0
   }
+  ,
+  {
+    id: xcom2Data.slug,
+    slug: xcom2Data.slug,
+    title: xcom2Data.title,
+    game_title: xcom2Data.game_title,
+    genre: xcom2Data.genre,
+    rating: xcom2Data.rating,
+    publish_date: xcom2Data.publish_date,
+    author: xcom2Data.author,
+    image_url: xcom2Data.image_url,
+    introduccion: xcom2Data.introduccion,
+    argumento: xcom2Data.argumento,
+    gameplay: xcom2Data.gameplay,
+    funciones: xcom2Data.funciones,
+    duracion: xcom2Data.duracion,
+    valoracion_personal: xcom2Data.valoracion_personal,
+    imagenes: xcom2Data.imagenes,
+    video_url: (xcom2Data as any).video_url || null,
+    comments_count: 0,
+    likes_count: 0,
+    dislikes_count: 0,
+    views_count: 0
+  }
 ];
 
 // Variable para activar/desactivar el modo desarrollo
-export const USE_MOCK_DATA = false;
+export const USE_MOCK_DATA = true;

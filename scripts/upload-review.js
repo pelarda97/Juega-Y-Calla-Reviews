@@ -3,8 +3,8 @@ import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import dotenv from 'dotenv';
 
-// Load environment variables from .env file
-dotenv.config();
+// Load environment variables from .env.local file
+dotenv.config({ path: '.env.local' });
 
 // Get command line arguments
 const args = process.argv.slice(2);
