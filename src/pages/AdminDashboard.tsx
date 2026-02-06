@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -128,25 +127,36 @@ const AdminDashboard = () => {
     setLoading(true);
     try {
       if (import.meta.env.DEV) {
-        console.log('🔐 Eliminando comentario con Service Role Key:', commentId);
+        console.log('🔐 Eliminando comentario vía API:', commentId);
       }
+
+      // Obtener el token de admin desde sessionStorage
+      const adminToken = sessionStorage.getItem('admin_session');
       
-      // Usar cliente admin con Service Role Key (ignora RLS)
-      const { data, error } = await supabaseAdmin
-        .from('comments')
-        .delete()
-        .eq('id', commentId)
-        .select();
+      if (!adminToken) {
+        throw new Error('Sesión de admin no encontrada. Por favor, inicia sesión nuevamente.');
+      }
+
+      // Llamar a la API backend (Vercel) que tiene acceso a la Service Role Key
+      const response = await fetch('/api/admin/delete-comment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          commentId,
+          adminToken
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al eliminar el comentario');
+      }
 
       if (import.meta.env.DEV) {
-        console.log('✅ Respuesta de eliminación:', { data, error });
-      }
-
-      if (error) {
-        if (import.meta.env.DEV) {
-          console.error('❌ Error de Supabase:', error);
-        }
-        throw error;
+        console.log('✅ Comentario eliminado exitosamente:', result);
       }
 
       toast({
@@ -160,19 +170,9 @@ const AdminDashboard = () => {
         console.error('❌ Error deleting comment:', error);
       }
       
-      let errorMessage = 'No se pudo eliminar el comentario';
-      
-      if (error.message) {
-        errorMessage += `: ${error.message}`;
-      }
-      
-      if (error.code === 'PGRST301') {
-        errorMessage = 'Error de permisos RLS. Verifica que Service Role Key esté configurada en .env.local';
-      }
-      
       toast({
         title: 'Error',
-        description: errorMessage,
+        description: error.message || 'No se pudo eliminar el comentario',
         variant: 'destructive'
       });
     } finally {
