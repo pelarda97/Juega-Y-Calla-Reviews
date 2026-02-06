@@ -17,18 +17,23 @@ export default async function handler(req, res) {
     }
 
     // Validar sesión de admin (verificar el hash de la contraseña)
-    const expectedHash = process.env.VITE_ADMIN_PASSWORD_HASH;
+    // Usar la variable ya cargada arriba
+    const expectedHash = adminPasswordHash;
     
     if (!adminToken || adminToken !== expectedHash) {
       return res.status(401).json({ error: 'No autorizado - Token de admin inválido' });
     }
 
     // Crear cliente de Supabase con Service Role Key (solo en servidor)
-    const supabaseUrl = process.env.VITE_SUPABASE_URL;
-    const serviceRoleKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
+    // En Vercel las variables NO usan el prefijo VITE_ para las funciones API
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
+    const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH || process.env.VITE_ADMIN_PASSWORD_HASH;
 
     if (!supabaseUrl || !serviceRoleKey) {
       console.error('❌ Variables de entorno no configuradas');
+      console.error('SUPABASE_URL:', supabaseUrl ? 'Configurada' : 'Faltante');
+      console.error('SERVICE_ROLE_KEY:', serviceRoleKey ? 'Configurada' : 'Faltante');
       return res.status(500).json({ 
         error: 'Error de configuración del servidor',
         details: 'Variables de entorno faltantes'
