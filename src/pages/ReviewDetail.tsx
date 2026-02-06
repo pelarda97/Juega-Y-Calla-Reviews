@@ -362,13 +362,14 @@ const ReviewDetail = () => {
         {/* Hero Section */}
         <div className="relative mb-6 sm:mb-8">
           <div className="bg-card border border-border rounded-lg overflow-hidden">
-            <div className="h-48 sm:h-56 md:h-64 bg-muted flex items-center justify-center">
+            <div className="h-48 sm:h-56 md:h-64 lg:h-80 bg-muted flex items-center justify-center">
               <img 
                 src={review.image} 
                 alt={review.title}
                 loading="eager"
                 fetchPriority="high"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-center"
+                style={{ objectPosition: 'center 30%' }}
               />
             </div>
             
