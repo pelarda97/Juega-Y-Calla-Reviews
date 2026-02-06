@@ -131,7 +131,7 @@ const AdminDashboard = () => {
       }
 
       // Obtener el token de admin desde sessionStorage
-      const adminToken = sessionStorage.getItem('admin_session');
+      const adminToken = sessionStorage.getItem('admin_token');
       
       if (!adminToken) {
         throw new Error('Sesión de admin no encontrada. Por favor, inicia sesión nuevamente.');

@@ -116,6 +116,8 @@ export const useAuth = () => {
         lastActivity: Date.now(),
       };
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+      // Guardar el hash para usarlo en peticiones API
+      sessionStorage.setItem('admin_token', hashedPassword);
       resetAttempts();
       setIsAuthenticated(true);
       return { success: true, message: 'Login exitoso' };
@@ -134,6 +136,7 @@ export const useAuth = () => {
   // Logout function
   const logout = () => {
     sessionStorage.removeItem(STORAGE_KEY);
+    sessionStorage.removeItem('admin_token');
     setIsAuthenticated(false);
   };
 
