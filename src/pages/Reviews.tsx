@@ -68,8 +68,12 @@ const Reviews = () => {
         
         setReviews(reviewsWithExcerpt);
         
-        // Extraer géneros únicos
-        const uniqueGenres = [...new Set(mockReviews.map(r => r.genre).filter(Boolean))];
+        // Extraer géneros únicos, dividiendo por comas si hay múltiples géneros
+        const allGenres = mockReviews
+          .map(r => r.genre)
+          .filter(Boolean)
+          .flatMap(genre => genre.split(',').map(g => g.trim()));
+        const uniqueGenres = [...new Set(allGenres)];
         setGenres(uniqueGenres as string[]);
         setLoading(false);
         return;
@@ -114,8 +118,12 @@ const Reviews = () => {
         
         setReviews(reviewsWithExcerpt);
 
-        // Extraer géneros únicos para el filtro
-        const uniqueGenres = [...new Set(data.map(r => r.genre).filter(Boolean))];
+        // Extraer géneros únicos para el filtro, dividiendo por comas si hay múltiples géneros
+        const allGenres = data
+          .map(r => r.genre)
+          .filter(Boolean)
+          .flatMap(genre => genre.split(',').map(g => g.trim()));
+        const uniqueGenres = [...new Set(allGenres)];
         setGenres(uniqueGenres as string[]);
       }
     } catch (error) {
@@ -137,7 +145,9 @@ const Reviews = () => {
       titleWords.some(word => word.startsWith(searchLower)) ||
       genreWords.some(word => word.startsWith(searchLower));
     
-    const matchesGenre = genreFilter === "all" || review.genre.toLowerCase().includes(genreFilter.toLowerCase());
+    // Dividir géneros por coma y verificar si alguno coincide con el filtro
+    const reviewGenres = review.genre.split(',').map(g => g.trim().toLowerCase());
+    const matchesGenre = genreFilter === "all" || reviewGenres.includes(genreFilter.toLowerCase());
     return matchesSearch && matchesGenre;
   });
 
