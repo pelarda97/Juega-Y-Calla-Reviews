@@ -3,6 +3,7 @@
 import tlou2Data from '../../reviews/the-last-of-us-2.json';
 import clairObscurData from '../../reviews/clair-obscur-expedition-33.json';
 import xcom2Data from '../../reviews/xcom2.json';
+import re7Data from '../../reviews/resident-evil-7-biohazard.json';
 
 export const mockReviews = [
   {
@@ -70,6 +71,29 @@ export const mockReviews = [
     valoracion_personal: xcom2Data.valoracion_personal,
     imagenes: xcom2Data.imagenes,
     video_url: (xcom2Data as any).video_url || null,
+    comments_count: 0,
+    likes_count: 0,
+    dislikes_count: 0,
+    views_count: 0
+  },
+  {
+    id: re7Data.slug,
+    slug: re7Data.slug,
+    title: re7Data.title,
+    game_title: re7Data.title,
+    genre: re7Data.genre,
+    rating: re7Data.rating,
+    publish_date: re7Data.publish_date,
+    author: re7Data.author,
+    image_url: re7Data.image_url,
+    introduccion: re7Data.introduccion,
+    argumento: re7Data.argumento,
+    gameplay: re7Data.gameplay,
+    funciones: re7Data.funciones,
+    duracion: re7Data.duracion,
+    valoracion_personal: re7Data.valoracion_personal,
+    imagenes: re7Data.imagenes,
+    video_url: (re7Data as any).video_url || null,
     comments_count: 0,
     likes_count: 0,
     dislikes_count: 0,
