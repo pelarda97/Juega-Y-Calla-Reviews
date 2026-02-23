@@ -100,7 +100,11 @@ const CommentThread = ({
               value={replyContent}
               onChange={(e) => setReplyContent(e.target.value)}
               rows={3}
+              maxLength={300}
             />
+            <p className="text-xs text-muted-foreground text-right">
+              {replyContent.length}/300 caracteres
+            </p>
             <div className="flex gap-2">
               <Button
                 size="sm"
@@ -382,7 +386,11 @@ const Comments = () => {
                     onChange={(e) => setNewComment(e.target.value)}
                     className="min-h-[100px] resize-none"
                     disabled={hasReachedDailyLimit || !canComment}
+                    maxLength={300}
                   />
+                  <p className="text-xs text-muted-foreground mt-1 text-right">
+                    {newComment.length}/300 caracteres
+                  </p>
                 </div>
                 
                 {/* Cooldown / Limit Info */}

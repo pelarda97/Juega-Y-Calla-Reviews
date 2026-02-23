@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { ReviewEditor } from '@/components/ReviewEditor';
 import { 
   LayoutDashboard, 
   MessageSquare, 
@@ -430,51 +431,12 @@ const AdminDashboard = () => {
             </Card>
           </TabsContent>
 
-          {/* Upload Tab */}
+          {/* Upload Tab - Editor de Reseñas */}
           <TabsContent value="upload" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Subir Nueva Reseña</CardTitle>
-                <CardDescription>Añade una nueva reseña en formato JSON</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    Esta funcionalidad permite subir archivos JSON de reseñas directamente al sistema.
-                  </p>
-                  <div className="p-4 bg-muted/30 rounded-lg">
-                    <h4 className="font-semibold mb-2">Formato JSON requerido:</h4>
-                    <pre className="text-xs bg-background p-3 rounded overflow-x-auto">
-{`{
-  "slug": "nombre-juego",
-  "title": "Título del Juego",
-  "game_title": "Título del Juego",
-  "rating": 9.5,
-  "author": "Juega y Calla",
-  "publish_date": "2024-01-15",
-  "image_url": "https://images.igdb.com/...",
-  "genre": "Acción/Aventura",
-  "introduccion": "...",
-  "argumento": "...",
-  "gameplay": "...",
-  "funciones": "...",
-  "duracion": "...",
-  "valoracion_personal": "...",
-  "imagenes": [...],
-  "video_url": [...]
-}`}
-                    </pre>
-                  </div>
-                  <Button variant="outline" className="w-full" disabled>
-                    <Upload className="h-4 w-4 mr-2" />
-                    Seleccionar Archivo JSON (Próximamente)
-                  </Button>
-                  <p className="text-xs text-muted-foreground text-center">
-                    Por ahora, añade reseñas manualmente en la carpeta /reviews/
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <ReviewEditor onSave={() => {
+              fetchStats();
+              fetchReviews();
+            }} />
           </TabsContent>
 
           {/* Stats Tab */}

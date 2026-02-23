@@ -82,8 +82,8 @@ export const validateCommentContent = (content: string): { isValid: boolean; rea
   }
 
   // Verificar longitud máxima
-  if (content.length > 1000) {
-    return { isValid: false, reason: 'El comentario no puede superar los 1000 caracteres' };
+  if (content.length > 300) {
+    return { isValid: false, reason: 'El comentario no puede superar los 300 caracteres' };
   }
 
   // Detectar spam de caracteres repetidos (aaaaaaaa, !!!!!!!, etc.)
