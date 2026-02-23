@@ -398,6 +398,20 @@ export const ReviewEditor = ({ existingReviewSlug, onSave }: ReviewEditorProps) 
     setConfirmDialogOpen(false);
     
     try {
+      // Get admin token from sessionStorage
+      const adminToken = sessionStorage.getItem('admin_token');
+      
+      if (!adminToken) {
+        toast({
+          title: 'Error de autenticación',
+          description: 'No se encontró token de administrador. Por favor, inicia sesión de nuevo.',
+          variant: 'destructive',
+        });
+        setSaving(false);
+        setPendingAction(null);
+        return;
+      }
+
       // Clean empty strings from arrays
       const cleanedData = {
         ...formData,
@@ -406,36 +420,45 @@ export const ReviewEditor = ({ existingReviewSlug, onSave }: ReviewEditorProps) 
         video_url: formData.video_url.filter(vid => vid.trim() !== ''),
       };
 
-      if (mode === 'edit') {
-        // Update existing review
-        const { error } = await supabase
-          .from('reviews')
-          .update(cleanedData)
-          .eq('slug', formData.slug);
+      // Get Supabase URL from environment
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      if (!supabaseUrl) {
+        throw new Error('VITE_SUPABASE_URL not configured');
+      }
 
-        if (error) throw error;
+      // Call Edge Function
+      const edgeFunctionUrl = `${supabaseUrl}/functions/v1/admin-manage-review`;
+      const action = mode === 'edit' ? 'update' : 'create';
 
-        toast({
-          title: pendingAction === 'draft' ? 'Borrador subido' : 'Reseña publicada',
-          description: pendingAction === 'draft' 
-            ? 'El borrador se ha subido a Supabase (no visible públicamente)' 
-            : 'La reseña se ha publicado y es visible para todos',
-        });
-      } else {
-        // Create new review
-        const { error } = await supabase
-          .from('reviews')
-          .insert(cleanedData);
+      const response = await fetch(edgeFunctionUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          action,
+          reviewData: cleanedData,
+          adminToken,
+        }),
+      });
 
-        if (error) throw error;
+      const result = await response.json();
 
-        toast({
-          title: pendingAction === 'draft' ? 'Borrador subido' : 'Reseña publicada',
-          description: pendingAction === 'draft'
-            ? 'El borrador se ha subido a Supabase (no visible públicamente)'
+      if (!response.ok) {
+        throw new Error(result.error || 'Error desconocido al procesar la reseña');
+      }
+
+      toast({
+        title: pendingAction === 'draft' ? 'Borrador subido' : 'Reseña publicada',
+        description: pendingAction === 'draft' 
+          ? 'El borrador se ha subido a Supabase (no visible públicamente)' 
+          : mode === 'edit' 
+            ? 'La reseña se ha actualizado correctamente'
             : 'La reseña se ha publicado correctamente',
-        });
+      });
 
+      if (mode === 'create') {
         // Clear localStorage after successful upload
         clearLocalStorage();
 
@@ -451,7 +474,9 @@ export const ReviewEditor = ({ existingReviewSlug, onSave }: ReviewEditorProps) 
       console.error('Error uploading to Supabase:', error);
       toast({
         title: 'Error',
-        description: 'No se pudo subir la reseña. Verifica los datos e intenta de nuevo.',
+        description: error instanceof Error 
+          ? error.message 
+          : 'No se pudo subir la reseña. Verifica los datos e intenta de nuevo.',
         variant: 'destructive',
       });
     } finally {
