@@ -8,23 +8,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 interface ReviewData {
   id?: string;
   title: string;
-  game: string;
+  game_title?: string;
+  game?: string;
   slug: string;
-  author: string;
-  date: string;
-  rating: number;
-  excerpt: string;
-  analysis: string;
-  gameplay: string;
-  graphics: string;
-  story: string;
-  verdict: string;
-  pros: string[];
-  cons: string[];
-  coverImage: string;
-  screenshots: string[];
-  genre?: string;
-  status: 'draft' | 'published';
+  [key: string]: unknown;
 }
 
 interface RequestBody {
@@ -94,10 +81,10 @@ serve(async (req) => {
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
     // Validate required fields
-    if (!reviewData.title || !reviewData.game || !reviewData.slug) {
+    if (!reviewData.title || (!reviewData.game_title && !reviewData.game) || !reviewData.slug) {
       return new Response(
         JSON.stringify({ 
-          error: 'Missing required fields: title, game, or slug',
+          error: 'Missing required fields: title, game_title, or slug',
           code: 'VALIDATION_ERROR'
         }),
         { 

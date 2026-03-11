@@ -32,6 +32,7 @@ interface ReviewEditorProps {
 }
 
 interface ReviewData {
+  id?: string;
   slug: string;
   title: string;
   game_title: string;
@@ -67,6 +68,7 @@ export const ReviewEditor = ({ existingReviewSlug, onSave }: ReviewEditorProps) 
   
   // Form state
   const [formData, setFormData] = useState<ReviewData>({
+    id: undefined,
     slug: '',
     title: '',
     game_title: '',
@@ -202,6 +204,7 @@ export const ReviewEditor = ({ existingReviewSlug, onSave }: ReviewEditorProps) 
         const reviewData = data as any;
         
         setFormData({
+          id: reviewData.id,
           slug: reviewData.slug,
           title: reviewData.title,
           game_title: reviewData.game_title || reviewData.title,
@@ -240,13 +243,14 @@ export const ReviewEditor = ({ existingReviewSlug, onSave }: ReviewEditorProps) 
     const savedDraft = loadFromLocalStorage();
     
     if (savedDraft) {
-      setFormData(savedDraft);
+      setFormData({ ...savedDraft, id: undefined });
       toast({
         title: 'Borrador recuperado',
         description: 'Se ha cargado tu trabajo guardado localmente',
       });
     } else {
       setFormData({
+        id: undefined,
         slug: '',
         title: '',
         game_title: '',
