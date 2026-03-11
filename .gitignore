@@ -29,6 +29,9 @@ dist-ssr
 .env.production
 .env.development
 
+# Scripts con credenciales (NUNCA subir al repositorio)
+generate-admin-hash.ps1
+
 # Lock files
 bun.lockb
 
